@@ -1,65 +1,113 @@
-import Image from "next/image";
+import Link from "next/link";
+import { GraduationCap, BookOpen, Trophy, Zap, Target, ArrowRight } from "lucide-react";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-background">
+      {/* Navigation */}
+      <nav className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
+        <div className="flex items-center gap-2">
+          <GraduationCap className="h-8 w-8 text-primary" />
+          <span className="text-2xl font-bold text-foreground">Lingua</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <Link href="/login" className="text-foreground hover:text-primary">
+            Log in
+          </Link>
+          <Link
+            href="/signup"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
+          >
+            Get Started
+          </Link>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="max-w-7xl mx-auto px-6 py-20 md:py-32">
+        <div className="max-w-3xl">
+          <h1 className="text-4xl md:text-6xl font-bold text-foreground leading-tight">
+            Learn English the <span className="text-primary">Smart Way</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+          <p className="mt-6 text-xl text-muted-foreground">
+            Master English with our rule-based learning system. Get instant feedback,
+            track your progress, and achieve fluency with CEFR-aligned lessons.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-4">
+            <Link
+              href="/signup"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:opacity-90"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              Start Learning Free
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center px-6 py-3 border border-border rounded-lg hover:bg-muted"
             >
-              Learning
-            </a>{" "}
-            center.
+              I have an account
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-20 px-6 bg-card">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Lingua?</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <FeatureCard
+              icon={<BookOpen className="h-8 w-8" />}
+              title="CEFR Curriculum"
+              description="Structured lessons from A1 to C2 level"
+            />
+            <FeatureCard
+              icon={<Target className="h-8 w-8" />}
+              title="Smart Feedback"
+              description="Get explanations when you make mistakes"
+            />
+            <FeatureCard
+              icon={<Zap className="h-8 w-8" />}
+              title="Gamification"
+              description="Earn XP and maintain streaks"
+            />
+            <FeatureCard
+              icon={<Trophy className="h-8 w-8" />}
+              title="Track Progress"
+              description="Visualize your learning journey"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-8 px-6 border-t border-border">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <GraduationCap className="h-6 w-6 text-primary" />
+            <span className="font-semibold">Lingua</span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            © 2026 University of Greenwich Final Year Project
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </footer>
+    </div>
+  );
+}
+
+function FeatureCard({ icon, title, description }: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="p-6 rounded-xl bg-background border border-border">
+      <div className="inline-flex p-3 rounded-lg bg-primary/10 text-primary mb-4">
+        {icon}
+      </div>
+      <h3 className="text-lg font-semibold mb-2">{title}</h3>
+      <p className="text-muted-foreground">{description}</p>
     </div>
   );
 }
