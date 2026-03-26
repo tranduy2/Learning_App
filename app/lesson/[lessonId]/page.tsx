@@ -35,6 +35,7 @@ export default function LessonPage() {
     const [isCorrect, setIsCorrect] = useState(false);
     const [score, setScore] = useState(0);
     const [correctCount, setCorrectCount] = useState(0);
+    const [hearts, setHearts] = useState(5);
     const [lessonComplete, setLessonComplete] = useState(false);
     const [explanation, setExplanation] = useState("");
     const [userAnswer, setUserAnswer] = useState("");
@@ -51,28 +52,21 @@ export default function LessonPage() {
         async function fetchData() {
             const supabase = createClient();
 
-            // Fetch lesson info
             const { data: lessonData } = await supabase
                 .from("lessons")
                 .select("id, title, xp_reward")
                 .eq("id", lessonId)
                 .single();
 
-            if (lessonData) {
-                setLesson(lessonData);
-            }
+            if (lessonData) setLesson(lessonData);
 
-            // Fetch exercises for this lesson
             const { data: exercisesData } = await supabase
                 .from("exercises")
                 .select("id, type, question, correct_answer, grammar_rule_id, options")
                 .eq("lesson_id", lessonId)
                 .order("order_index");
 
-            if (exercisesData && exercisesData.length > 0) {
-                setExercises(exercisesData);
-            }
-
+            if (exercisesData && exercisesData.length > 0) setExercises(exercisesData);
             setLoading(false);
         }
 
@@ -80,12 +74,22 @@ export default function LessonPage() {
     }, [lessonId]);
 
     const currentExercise = exercises[currentIndex];
-    const progress = exercises.length > 0 ? ((currentIndex + 1) / exercises.length) * 100 : 0;
+    const progress = exercises.length > 0 ? ((currentIndex + (showResult ? 1 : 0)) / exercises.length) * 100 : 0;
+
+    const exerciseTypeLabel = (type: string) => {
+        switch (type) {
+            case "multiple_choice": return "Choose the correct answer";
+            case "fill_blank": return "Fill in the blank";
+            case "word_order": return "Put the words in order";
+            case "listening": return "Listen and type";
+            case "translation": return "Translate this sentence";
+            default: return "Complete the exercise";
+        }
+    };
 
     async function handleAnswer(answer: string) {
         if (!currentExercise) return;
 
-        // Validate answer
         const correctAnswer = currentExercise.correct_answer.split("|")[0].trim();
         const correct = answer.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
 
@@ -96,13 +100,13 @@ export default function LessonPage() {
         if (correct) {
             setScore(score + 10);
             setCorrectCount(correctCount + 1);
+        } else {
+            setHearts(Math.max(0, hearts - 1));
         }
 
-        // Fetch grammar rule explanation if wrong and has a rule
         if (!correct && currentExercise.grammar_rule_id) {
             const supabase = createClient();
 
-            // Fetch full grammar rule for modal
             const { data: rule } = await supabase
                 .from("grammar_rules")
                 .select("title, explanation, examples, category, cefr_level")
@@ -120,7 +124,6 @@ export default function LessonPage() {
                 });
             }
 
-            // Log weakness to user_weaknesses table (7.4)
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
                 logUserWeakness(user.id, currentExercise.grammar_rule_id, currentExercise.id);
@@ -140,7 +143,6 @@ export default function LessonPage() {
             setShowGrammarModal(false);
         } else {
             setLessonComplete(true);
-            // Save XP to Supabase (Phase 8)
             const supabase = createClient();
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
@@ -149,32 +151,27 @@ export default function LessonPage() {
         }
     }
 
-    // Loading state
+    // Loading
     if (loading) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
+            <div className="min-h-screen bg-white dark:bg-[#0F1729] flex items-center justify-center">
                 <div className="text-center">
-                    <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-muted-foreground">Loading lesson...</p>
+                    <div className="w-12 h-12 border-4 border-[#3C83F6] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-[#75777F]">Loading lesson...</p>
                 </div>
             </div>
         );
     }
 
-    // No exercises found
+    // No exercises
     if (exercises.length === 0) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
+            <div className="min-h-screen bg-white dark:bg-[#0F1729] flex items-center justify-center">
                 <div className="text-center max-w-md px-4">
                     <div className="text-6xl mb-4">📝</div>
-                    <h1 className="text-2xl font-bold text-foreground mb-2">No exercises yet</h1>
-                    <p className="text-muted-foreground mb-6">
-                        This lesson doesn&apos;t have any exercises. Check back later!
-                    </p>
-                    <Link
-                        href="/learn"
-                        className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:opacity-90"
-                    >
+                    <h1 className="text-2xl font-bold text-[#1A1C1E] dark:text-white mb-2">No exercises yet</h1>
+                    <p className="text-[#75777F] mb-6">This lesson doesn&apos;t have any exercises. Check back later!</p>
+                    <Link href="/learn" className="inline-block px-6 py-3 bg-[#3C83F6] text-white rounded-xl font-medium hover:bg-[#2B6FE0]">
                         Back to Learning Path
                     </Link>
                 </div>
@@ -182,35 +179,34 @@ export default function LessonPage() {
         );
     }
 
-    // Lesson complete screen
+    // Lesson complete
     if (lessonComplete) {
         const percentage = Math.round((correctCount / exercises.length) * 100);
         const isPassed = percentage >= 60;
 
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
+            <div className="min-h-screen bg-white dark:bg-[#0F1729] flex items-center justify-center">
                 <div className="text-center max-w-md px-4">
-                    <div className="text-6xl mb-4">{isPassed ? "🎉" : "📚"}</div>
-                    <h1 className="text-2xl font-bold text-foreground mb-2">
+                    <div className="text-7xl mb-6">{isPassed ? "🎉" : "📚"}</div>
+                    <h1 className="text-3xl font-bold text-[#1A1C1E] dark:text-white mb-2">
                         {isPassed ? "Lesson Complete!" : "Keep Practicing!"}
                     </h1>
-                    <p className="text-muted-foreground mb-6">
+                    <p className="text-[#75777F] mb-8">
                         You got {correctCount} out of {exercises.length} correct ({percentage}%)
                     </p>
 
-                    {/* Score summary */}
-                    <div className="bg-card border border-border rounded-xl p-6 mb-6 text-left space-y-3">
+                    <div className="bg-[#F0F2F5] dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-2xl p-6 mb-8 text-left space-y-4">
                         <div className="flex justify-between">
-                            <span className="text-muted-foreground">XP Earned</span>
-                            <span className="font-bold text-primary">+{score} XP</span>
+                            <span className="text-[#75777F]">XP Earned</span>
+                            <span className="font-bold text-[#3C83F6]">+{score} XP</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-muted-foreground">Accuracy</span>
-                            <span className="font-bold text-foreground">{percentage}%</span>
+                            <span className="text-[#75777F]">Accuracy</span>
+                            <span className="font-bold text-[#1A1C1E] dark:text-white">{percentage}%</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-muted-foreground">Exercises</span>
-                            <span className="font-bold text-foreground">{correctCount}/{exercises.length}</span>
+                            <span className="text-[#75777F]">Hearts Remaining</span>
+                            <span className="font-bold text-[#1A1C1E] dark:text-white">❤️ {hearts}</span>
                         </div>
                     </div>
 
@@ -220,17 +216,18 @@ export default function LessonPage() {
                                 setCurrentIndex(0);
                                 setScore(0);
                                 setCorrectCount(0);
+                                setHearts(5);
                                 setShowResult(false);
                                 setLessonComplete(false);
                                 setExplanation("");
                             }}
-                            className="flex-1 py-3 border border-border rounded-xl font-medium text-foreground hover:bg-muted"
+                            className="flex-1 py-3.5 border border-[#D4D6DB] dark:border-[#2E3039] rounded-xl font-medium text-[#1A1C1E] dark:text-white hover:bg-[#F0F2F5] dark:hover:bg-[#1B1D24]"
                         >
                             Try Again
                         </button>
                         <Link
                             href="/learn"
-                            className="flex-1 py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:opacity-90 text-center"
+                            className="flex-1 py-3.5 bg-[#3C83F6] text-white rounded-xl font-medium hover:bg-[#2B6FE0] text-center"
                         >
                             Continue
                         </Link>
@@ -240,39 +237,44 @@ export default function LessonPage() {
         );
     }
 
-    // Exercise screen
+    // Main exercise screen
     return (
-        <div className="min-h-screen bg-background">
-            {/* Header with progress bar */}
-            <header className="sticky top-0 bg-card border-b border-border z-10">
-                <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-4">
-                    <Link href="/learn" className="p-2 hover:bg-muted rounded-lg text-muted-foreground">
-                        ✕
+        <div className="min-h-screen bg-white dark:bg-[#0F1729] flex flex-col">
+            {/* Top Bar: X + Progress + Hearts */}
+            <header className="sticky top-0 bg-white dark:bg-[#0F1729] z-10 px-4 py-3">
+                <div className="max-w-2xl mx-auto flex items-center gap-4">
+                    <Link href="/learn" className="text-[#75777F] hover:text-[#1A1C1E] dark:hover:text-white transition-colors">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </Link>
                     <div className="flex-1">
-                        <div className="h-3 bg-muted rounded-full overflow-hidden">
+                        <div className="h-3 bg-[#E3E5E8] dark:bg-[#2A2D35] rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-primary rounded-full transition-all duration-500"
+                                className="h-full bg-[#3C83F6] rounded-full transition-all duration-500"
                                 style={{ width: `${progress}%` }}
                             />
                         </div>
                     </div>
-                    <span className="text-sm text-muted-foreground">
-                        {currentIndex + 1}/{exercises.length}
-                    </span>
-                    <span className="text-sm font-bold text-primary">+{score} XP</span>
+                    <div className="flex items-center gap-1">
+                        <span className="text-red-500">❤️</span>
+                        <span className="font-bold text-[#1A1C1E] dark:text-white text-sm">{hearts}</span>
+                    </div>
                 </div>
             </header>
 
-            {/* Content */}
-            <main className="max-w-2xl mx-auto px-4 py-8">
-                <div className="space-y-6">
-                    {/* Exercise type label */}
-                    <span className="inline-block px-3 py-1 text-xs font-medium bg-muted text-muted-foreground rounded-full capitalize">
-                        {currentExercise.type.replace("_", " ")}
-                    </span>
+            {/* Exercise Content */}
+            <main className="flex-1 flex flex-col max-w-2xl mx-auto w-full px-4">
+                <div className="flex-1 py-8">
+                    {/* Exercise Type Heading */}
+                    <h1 className="text-2xl md:text-3xl font-bold text-[#1A1C1E] dark:text-white mb-1">
+                        {exerciseTypeLabel(currentExercise.type)}
+                    </h1>
+                    <p className="text-xs font-bold text-[#3C83F6] uppercase tracking-wider mb-8">
+                        {lesson?.title ? `Lesson: ${lesson.title}` : ""}
+                    </p>
 
-                    {/* Render the right exercise component */}
+                    {/* Exercise component */}
                     {!showResult && (
                         <>
                             {currentExercise.type === "multiple_choice" && (
@@ -293,63 +295,85 @@ export default function LessonPage() {
                         </>
                     )}
 
-                    {/* Result feedback */}
-                    {showResult && (
-                        <div
-                            className={`p-6 rounded-xl border-2 ${isCorrect
-                                    ? "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800"
-                                    : "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800"
-                                }`}
-                        >
-                            <div className="flex items-center gap-3 mb-3">
-                                <span className="text-3xl">{isCorrect ? "✅" : "❌"}</span>
-                                <span
-                                    className={`text-xl font-bold ${isCorrect
-                                            ? "text-green-600 dark:text-green-400"
-                                            : "text-red-600 dark:text-red-400"
-                                        }`}
-                                >
-                                    {isCorrect ? "Correct! +10 XP" : "Incorrect"}
-                                </span>
-                            </div>
-
-                            {!isCorrect && (
-                                <div className="mb-3">
-                                    <AnswerDiff
-                                        userAnswer={userAnswer}
-                                        correctAnswer={currentExercise.correct_answer.split("|")[0]}
-                                    />
-                                </div>
-                            )}
-
-                            {/* Grammar rule explanation + modal trigger */}
-                            {explanation && (
-                                <div className="mt-3 p-4 bg-card border border-border rounded-lg">
-                                    <p className="text-xs font-medium text-primary mb-1">📖 Grammar Tip</p>
-                                    <p className="text-sm text-foreground mb-2">{explanation}</p>
-                                    {grammarModal && (
-                                        <button
-                                            onClick={() => setShowGrammarModal(true)}
-                                            className="text-xs font-medium text-primary hover:underline"
-                                        >
-                                            💡 See full grammar rule →
-                                        </button>
-                                    )}
-                                </div>
-                            )}
-
-                            <button
-                                onClick={handleNext}
-                                className="w-full mt-4 h-12 bg-primary text-primary-foreground font-medium rounded-xl hover:opacity-90 flex items-center justify-center gap-2"
-                            >
-                                {currentIndex < exercises.length - 1 ? "Next Question →" : "Finish Lesson 🎉"}
-                            </button>
+                    {/* Correct result (stays in main area) */}
+                    {showResult && isCorrect && (
+                        <div className="flex items-center gap-3 mb-6">
+                            <span className="text-3xl">✅</span>
+                            <span className="text-xl font-bold text-green-600 dark:text-green-400">Correct! +10 XP</span>
                         </div>
                     )}
                 </div>
+
+                {/* Bottom feedback panel */}
+                {showResult && (
+                    <div className={`-mx-4 px-6 py-6 ${
+                        isCorrect
+                            ? "bg-green-50 dark:bg-green-900/10 border-t-2 border-green-300 dark:border-green-700"
+                            : "bg-red-50 dark:bg-red-900/10 border-t-2 border-red-300 dark:border-red-700"
+                    }`}>
+                        {/* Incorrect solution header */}
+                        {!isCorrect && (
+                            <div className="mb-4">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <div className="w-7 h-7 rounded-full bg-red-500 flex items-center justify-center">
+                                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-lg font-bold text-red-600 dark:text-red-400">Incorrect solution</span>
+                                </div>
+                                <AnswerDiff
+                                    userAnswer={userAnswer}
+                                    correctAnswer={currentExercise.correct_answer.split("|")[0]}
+                                />
+                            </div>
+                        )}
+
+                        {/* Grammar Rule card */}
+                        {explanation && !isCorrect && (
+                            <div className="bg-white/60 dark:bg-[#1B2840] border border-[#D4D6DB] dark:border-[#2E3039] rounded-xl p-4 mb-4 flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span className="text-sm">💡</span>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-[#75777F] uppercase tracking-wider mb-1">Grammar Rule</p>
+                                    <p className="text-sm text-[#1A1C1E] dark:text-gray-200">{explanation}</p>
+                                    {grammarModal && (
+                                        <button
+                                            onClick={() => setShowGrammarModal(true)}
+                                            className="text-xs font-medium text-[#3C83F6] hover:underline mt-2"
+                                        >
+                                            See full rule →
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Correct feedback */}
+                        {isCorrect && (
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center">
+                                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <span className="text-lg font-bold text-green-600 dark:text-green-400">Great job!</span>
+                            </div>
+                        )}
+
+                        {/* Continue button */}
+                        <button
+                            onClick={handleNext}
+                            className="w-full py-3.5 bg-[#3C83F6] text-white font-semibold rounded-xl hover:bg-[#2B6FE0] transition-colors flex items-center justify-center gap-2 shadow-lg shadow-[#3C83F6]/20"
+                        >
+                            {currentIndex < exercises.length - 1 ? "Continue" : "Finish Lesson"} <span>→</span>
+                        </button>
+                    </div>
+                )}
             </main>
 
-            {/* Grammar Card Modal (7.3) */}
+            {/* Grammar Card Modal */}
             {grammarModal && (
                 <GrammarCard
                     isOpen={showGrammarModal}

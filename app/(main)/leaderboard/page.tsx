@@ -44,9 +44,9 @@ export default function LeaderboardPage() {
         return (
             <div className="max-w-2xl mx-auto px-4 py-8">
                 <div className="animate-pulse space-y-4">
-                    <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48"></div>
+                    <div className="h-8 bg-gray-200 dark:bg-[#2A2D35] rounded w-48"></div>
                     {[1, 2, 3, 4, 5].map((i) => (
-                        <div key={i} className="h-20 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+                        <div key={i} className="h-20 bg-gray-200 dark:bg-[#2A2D35] rounded-xl"></div>
                     ))}
                 </div>
             </div>
@@ -62,12 +62,12 @@ export default function LeaderboardPage() {
                 </div>
 
                 {/* Period Toggle */}
-                <div className="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
+                <div className="flex bg-gray-100 dark:bg-[#1B1D24] rounded-xl p-1">
                     <button
                         onClick={() => setPeriod("weekly")}
                         className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                             period === "weekly"
-                                ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
+                                ? "bg-white dark:bg-[#2A2D35] text-gray-900 dark:text-white shadow-sm"
                                 : "text-gray-500 dark:text-gray-400 hover:text-gray-700"
                         }`}
                     >
@@ -77,7 +77,7 @@ export default function LeaderboardPage() {
                         onClick={() => setPeriod("all-time")}
                         className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                             period === "all-time"
-                                ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
+                                ? "bg-white dark:bg-[#2A2D35] text-gray-900 dark:text-white shadow-sm"
                                 : "text-gray-500 dark:text-gray-400 hover:text-gray-700"
                         }`}
                     >
@@ -91,13 +91,13 @@ export default function LeaderboardPage() {
                 <div className="flex items-end justify-center gap-3 mb-8">
                     {/* 2nd place */}
                     <div className="flex flex-col items-center">
-                        <div className="w-14 h-14 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xl font-bold text-gray-600 dark:text-gray-400 mb-1">
+                        <div className="w-14 h-14 rounded-full bg-gray-200 dark:bg-[#2A2D35] flex items-center justify-center text-xl font-bold text-gray-600 dark:text-gray-400 mb-1">
                             {users[1].display_name?.charAt(0).toUpperCase() || "?"}
                         </div>
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             {users[1].display_name?.split(" ")[0] || "—"}
                         </span>
-                        <div className="w-20 h-16 bg-gray-200 dark:bg-gray-700 rounded-t-xl flex items-center justify-center">
+                        <div className="w-20 h-16 bg-gray-200 dark:bg-[#2A2D35] rounded-t-xl flex items-center justify-center">
                             <div className="text-center">
                                 <span className="text-lg">🥈</span>
                                 <p className="text-xs font-bold text-gray-600 dark:text-gray-300">{users[1].total_xp} XP</p>
@@ -155,8 +155,8 @@ export default function LeaderboardPage() {
                                 key={user.id}
                                 className={`flex items-center gap-4 p-4 rounded-xl border transition-colors ${
                                     isCurrentUser
-                                        ? "bg-blue-50 dark:bg-blue-900/15 border-blue-200 dark:border-blue-800"
-                                        : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750"
+                                        ? "bg-[#3C83F6]/5 dark:bg-[#3C83F6]/10 border-blue-200 dark:border-blue-800"
+                                        : "bg-white dark:bg-[#1B1D24] border-[#D4D6DB] dark:border-[#2E3039] hover:bg-gray-50 dark:hover:bg-gray-750"
                                 }`}
                             >
                                 {/* Rank */}
@@ -177,8 +177,8 @@ export default function LeaderboardPage() {
                                 {/* Avatar */}
                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
                                     isCurrentUser
-                                        ? "bg-blue-500 text-white"
-                                        : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                                        ? "bg-[#3C83F6] text-white"
+                                        : "bg-gray-200 dark:bg-[#2A2D35] text-gray-600 dark:text-gray-400"
                                 }`}>
                                     {user.display_name?.charAt(0).toUpperCase() || "?"}
                                 </div>
@@ -187,7 +187,7 @@ export default function LeaderboardPage() {
                                 <div className="flex-1 min-w-0">
                                     <p className={`font-medium truncate ${
                                         isCurrentUser
-                                            ? "text-blue-600 dark:text-blue-400"
+                                            ? "text-[#3C83F6] dark:text-[#6BA3F7]"
                                             : "text-gray-900 dark:text-white"
                                     }`}>
                                         {user.display_name || "Anonymous"}
@@ -205,7 +205,7 @@ export default function LeaderboardPage() {
 
                                 {/* XP */}
                                 <div className="text-right">
-                                    <p className="font-bold text-blue-600 dark:text-blue-400">
+                                    <p className="font-bold text-[#3C83F6] dark:text-[#6BA3F7]">
                                         {(user.total_xp || 0).toLocaleString()}
                                     </p>
                                     <p className="text-xs text-gray-500">XP</p>

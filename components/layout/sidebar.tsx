@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { createClient } from "@/lib/client";
 
 const navItems = [
     { href: "/learn", label: "Learn", icon: "📚" },
@@ -15,19 +16,27 @@ const navItems = [
 
 export function Sidebar() {
     const pathname = usePathname();
+    const router = useRouter();
+
+    async function handleLogout() {
+        const supabase = createClient();
+        await supabase.auth.signOut();
+        router.refresh();
+        router.push("/login");
+    }
 
     return (
-        <aside className="hidden md:flex flex-col w-64 h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 fixed left-0 top-0">
+        <aside className="hidden md:flex flex-col w-64 h-screen bg-white dark:bg-[#1B1D24] border-r border-[#D4D6DB] dark:border-[#2E3039] p-4 fixed left-0 top-0">
             {/* Logo */}
             <Link href="/learn" className="flex items-center gap-3 mb-8 px-2">
-                <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-[#3C83F6] rounded-xl flex items-center justify-center">
                     <span className="text-white font-bold text-lg">L</span>
                 </div>
-                <span className="text-xl font-bold text-gray-900 dark:text-white">Lingua</span>
+                <span className="text-xl font-bold text-[#1A1C1E] dark:text-white">Lingua</span>
             </Link>
 
             {/* Nav Items */}
-            <nav className="flex-1 space-y-2">
+            <nav className="flex-1 space-y-1">
                 {navItems.map((item) => {
                     const isActive = pathname.startsWith(item.href);
                     return (
@@ -35,8 +44,8 @@ export function Sidebar() {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${isActive
-                                    ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                    ? "bg-[#3C83F6]/10 text-[#3C83F6] dark:bg-[#3C83F6]/15 dark:text-[#6BA3F7]"
+                                    : "text-[#75777F] hover:bg-[#F0F2F5] dark:hover:bg-[#2A2D35] hover:text-[#1A1C1E] dark:hover:text-white"
                                 }`}
                         >
                             <span className="text-xl">{item.icon}</span>
@@ -47,21 +56,31 @@ export function Sidebar() {
             </nav>
 
             {/* Admin Link */}
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mb-4">
+            <div className="border-t border-[#D4D6DB] dark:border-[#2E3039] pt-4 mb-4">
                 <Link
                     href="/admin"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#75777F] hover:bg-[#F0F2F5] dark:hover:bg-[#2A2D35] hover:text-[#1A1C1E] dark:hover:text-white"
                 >
                     <span className="text-xl">⚙️</span>
                     <span>Admin</span>
                 </Link>
             </div>
 
-            {/* Theme Toggle */}
-            <div className="flex items-center gap-3 px-2">
-                <ThemeToggle />
-                <span className="text-sm text-gray-600 dark:text-gray-400">Theme</span>
+            {/* Theme Toggle & Logout */}
+            <div className="space-y-3">
+                <div className="flex items-center gap-3 px-2">
+                    <ThemeToggle />
+                    <span className="text-sm text-[#75777F]">Theme</span>
+                </div>
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 w-full transition-colors font-medium"
+                >
+                    <span className="text-xl">🚪</span>
+                    <span>Log out</span>
+                </button>
             </div>
         </aside>
     );
 }
+

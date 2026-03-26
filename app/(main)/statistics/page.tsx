@@ -152,13 +152,13 @@ export default function StatisticsPage() {
         return (
             <div className="max-w-5xl mx-auto px-4 py-8">
                 <div className="animate-pulse space-y-6">
-                    <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48"></div>
+                    <div className="h-8 bg-gray-200 dark:bg-[#2A2D35] rounded w-48"></div>
                     <div className="grid md:grid-cols-4 gap-4">
                         {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="h-24 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+                            <div key={i} className="h-24 bg-gray-200 dark:bg-[#2A2D35] rounded-xl"></div>
                         ))}
                     </div>
-                    <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+                    <div className="h-64 bg-gray-200 dark:bg-[#2A2D35] rounded-xl"></div>
                 </div>
             </div>
         );
@@ -194,18 +194,18 @@ export default function StatisticsPage() {
 
             {/* Stat Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+                <div className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-xl p-4">
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total XP</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{(profile?.totalXp || 0).toLocaleString()}</p>
                     <div className="mt-2 flex items-center gap-1 text-green-500 text-xs font-medium">
                         <span>⚡</span> Keep going!
                     </div>
                 </div>
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+                <div className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-xl p-4">
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Current Level</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{profile?.level || "A1"}</p>
                     {levelInfo && (
-                        <div className="mt-2 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div className="mt-2 h-1.5 bg-gray-200 dark:bg-[#2A2D35] rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
                                 style={{ width: `${levelInfo.progress}%` }}
@@ -213,15 +213,15 @@ export default function StatisticsPage() {
                         </div>
                     )}
                 </div>
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+                <div className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-xl p-4">
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Day Streak</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{profile?.streak || 0}</p>
                     <div className="mt-2 text-orange-500 text-xs font-medium">🔥 days in a row</div>
                 </div>
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+                <div className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-xl p-4">
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Weak Areas</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{weaknesses.length}</p>
-                    <Link href="/review" className="mt-2 text-blue-500 text-xs font-medium hover:underline block">
+                    <Link href="/review" className="mt-2 text-[#3C83F6] text-xs font-medium hover:underline block">
                         🧠 Review now →
                     </Link>
                 </div>
@@ -230,7 +230,7 @@ export default function StatisticsPage() {
             {/* Charts Row */}
             <div className="grid md:grid-cols-2 gap-6 mb-8">
                 {/* Weekly XP Bar Chart */}
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+                <div className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-2xl p-6">
                     <h2 className="font-semibold text-gray-900 dark:text-white mb-4">📈 Weekly XP Activity</h2>
                     {weeklyXp.length > 0 ? (
                         <ResponsiveContainer width="100%" height={220}>
@@ -265,7 +265,7 @@ export default function StatisticsPage() {
                 </div>
 
                 {/* Level Progression Area Chart */}
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+                <div className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-2xl p-6">
                     <h2 className="font-semibold text-gray-900 dark:text-white mb-4">🎯 Level Progression</h2>
                     <ResponsiveContainer width="100%" height={220}>
                         <AreaChart data={progressData}>
@@ -311,7 +311,7 @@ export default function StatisticsPage() {
 
             {/* Error Distribution Pie Chart */}
             {weaknesses.length > 0 && (
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 mb-8">
+                <div className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-2xl p-6 mb-8">
                     <h2 className="font-semibold text-gray-900 dark:text-white mb-4">🔴 Error Distribution by Grammar Rule</h2>
                     <div className="grid md:grid-cols-2 items-center gap-6">
                         <ResponsiveContainer width="100%" height={250}>
@@ -365,7 +365,7 @@ export default function StatisticsPage() {
                             ))}
                             <Link
                                 href="/review"
-                                className="inline-flex items-center gap-1 text-sm text-blue-500 font-medium hover:underline mt-2"
+                                className="inline-flex items-center gap-1 text-sm text-[#3C83F6] font-medium hover:underline mt-2"
                             >
                                 🧠 Practice weak areas →
                             </Link>
@@ -376,7 +376,7 @@ export default function StatisticsPage() {
 
             {/* 9.3 Grammar Mastery Heatmap */}
             {grammarMastery.length > 0 && (
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 mb-8">
+                <div className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-2xl p-6 mb-8">
                     <h2 className="font-semibold text-gray-900 dark:text-white mb-2">🟩 Grammar Mastery Heatmap</h2>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
                         How well you&apos;ve mastered each grammar category. Green = strong, Red = needs work.
@@ -391,7 +391,7 @@ export default function StatisticsPage() {
                             return (
                                 <div
                                     key={gm.category}
-                                    className="relative rounded-xl p-4 border border-gray-200 dark:border-gray-700 overflow-hidden"
+                                    className="relative rounded-xl p-4 border border-[#D4D6DB] dark:border-[#2E3039] overflow-hidden"
                                 >
                                     {/* Background fill based on mastery */}
                                     <div
@@ -414,7 +414,7 @@ export default function StatisticsPage() {
                                             </span>
                                         </div>
                                         {/* Mini bar */}
-                                        <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mt-2 overflow-hidden">
+                                        <div className="h-1.5 bg-gray-200 dark:bg-[#2A2D35] rounded-full mt-2 overflow-hidden">
                                             <div
                                                 className="h-full rounded-full transition-all"
                                                 style={{ width: `${gm.mastery}%`, backgroundColor: bg }}
@@ -430,7 +430,7 @@ export default function StatisticsPage() {
 
             {/* 9.4 Error Frequency Analysis */}
             {weaknesses.length > 0 && (
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 mb-8">
+                <div className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-2xl p-6 mb-8">
                     <h2 className="font-semibold text-gray-900 dark:text-white mb-2">📉 Error Frequency Analysis</h2>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
                         Your most common mistakes, ranked by frequency.
@@ -446,7 +446,7 @@ export default function StatisticsPage() {
                                     ? "bg-red-500"
                                     : severity === "medium"
                                     ? "bg-yellow-500"
-                                    : "bg-blue-500";
+                                    : "bg-[#3C83F6]";
                             const dotColor =
                                 severity === "high"
                                     ? "bg-red-400"
@@ -463,7 +463,7 @@ export default function StatisticsPage() {
                                                 {w.rule}
                                             </span>
                                             {w.category && (
-                                                <span className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded capitalize hidden sm:inline">
+                                                <span className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-[#2A2D35] text-gray-500 dark:text-gray-400 rounded capitalize hidden sm:inline">
                                                     {w.category}
                                                 </span>
                                             )}
@@ -473,12 +473,12 @@ export default function StatisticsPage() {
                                                 ? "text-red-500"
                                                 : severity === "medium"
                                                 ? "text-yellow-600 dark:text-yellow-400"
-                                                : "text-blue-500"
+                                                : "text-[#3C83F6]"
                                         }`}>
                                             {w.count} error{w.count > 1 ? "s" : ""}
                                         </span>
                                     </div>
-                                    <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                    <div className="h-2 bg-gray-100 dark:bg-[#2A2D35] rounded-full overflow-hidden">
                                         <div
                                             className={`h-full rounded-full transition-all duration-500 ${barColor}`}
                                             style={{ width: `${pct}%` }}
@@ -497,7 +497,7 @@ export default function StatisticsPage() {
                     </div>
                     <Link
                         href="/review"
-                        className="inline-flex items-center gap-1 text-sm text-blue-500 font-medium hover:underline mt-4"
+                        className="inline-flex items-center gap-1 text-sm text-[#3C83F6] font-medium hover:underline mt-4"
                     >
                         🧠 Practice these areas →
                     </Link>
@@ -508,7 +508,7 @@ export default function StatisticsPage() {
             <div className="flex flex-wrap gap-3">
                 <Link
                     href="/learn"
-                    className="inline-flex items-center gap-2 px-5 py-3 bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors"
+                    className="inline-flex items-center gap-2 px-5 py-3 bg-[#3C83F6] text-white font-medium rounded-xl hover:bg-[#2B6FE0] transition-colors"
                 >
                     📚 Continue Learning
                 </Link>

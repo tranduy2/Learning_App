@@ -15,30 +15,30 @@ export default function HomePage() {
   const isDark = resolvedTheme === "dark";
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0b1120]">
+    <div className="min-h-screen bg-white dark:bg-[#111318]">
       {/* Navigation */}
       <nav className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">L</span>
+          <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-sm">💎</span>
           </div>
           <span className="text-xl font-bold text-gray-900 dark:text-white">Lingua</span>
         </div>
         <div className="hidden md:flex items-center gap-6">
           <a href="#method" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Method</a>
           <a href="#pricing" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Pricing</a>
-          <Link href="/login" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Login</Link>
         </div>
         <div className="flex items-center gap-3">
           {mounted && (
             <button
               onClick={() => setTheme(isDark ? "light" : "dark")}
-              className="p-2 rounded-lg bg-gray-100 dark:bg-[#1a2332] hover:bg-gray-200 dark:hover:bg-[#243044] transition-colors"
+              className="p-2 rounded-lg bg-gray-100 dark:bg-[#1B1D24] hover:bg-gray-200 dark:hover:bg-[#2A2D35] transition-colors"
             >
               {isDark ? "☀️" : "🌙"}
             </button>
           )}
-          <Link href="/signup" className="px-5 py-2 bg-blue-500 text-white rounded-full text-sm font-semibold hover:bg-blue-600 transition-colors">
+          <Link href="/login" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Login</Link>
+          <Link href="/signup" className="px-5 py-2 bg-[#3C83F6] text-white rounded-full text-sm font-semibold hover:bg-[#2B6FE0] transition-colors">
             Sign Up
           </Link>
         </div>
@@ -51,31 +51,32 @@ export default function HomePage() {
             <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
               <span className="text-gray-900 dark:text-white">Stop Guessing.</span>
               <br />
-              <span className="text-blue-500 dark:text-blue-400">Start Understanding.</span>
+              <span className="text-[#3C83F6] dark:text-[#6BA3F7] italic">Start Understanding.</span>
             </h1>
             <p className="mt-6 text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
               Lingua uses a unique rule-based feedback system to teach you the <strong className="text-gray-900 dark:text-white">why</strong> behind English grammar, not just the <em>what</em>.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/signup" className="px-7 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/20">
+              <Link href="/signup" className="px-7 py-3 bg-[#3C83F6] text-white font-semibold rounded-lg hover:bg-[#2B6FE0] transition-colors shadow-lg shadow-[#3C83F6]/20">
                 Get Started for Free
               </Link>
-              <a href="#method" className="px-7 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-[#1a2332] flex items-center gap-2 text-gray-900 dark:text-white transition-colors">
-                ▶ See how it works
+              <a href="#method" className="px-7 py-3 border border-[#D4D6DB] dark:border-[#2E3039] rounded-lg hover:bg-gray-100 dark:hover:bg-[#1B1D24] flex items-center gap-2 text-[#1A1C1E] dark:text-white transition-colors">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd"/></svg>
+                See how it works
               </a>
             </div>
             <div className="mt-8 flex items-center gap-3">
               <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full bg-blue-300 border-2 border-white dark:border-[#0b1120]"></div>
-                <div className="w-8 h-8 rounded-full bg-blue-400 border-2 border-white dark:border-[#0b1120]"></div>
-                <div className="w-8 h-8 rounded-full bg-blue-500 border-2 border-white dark:border-[#0b1120]"></div>
+                <div className="w-8 h-8 rounded-full bg-green-400 border-2 border-white dark:border-[#111318]"></div>
+                <div className="w-8 h-8 rounded-full bg-[#3C83F6] border-2 border-white dark:border-[#111318]"></div>
+                <div className="w-8 h-8 rounded-full bg-green-500 border-2 border-white dark:border-[#111318]"></div>
               </div>
               <span className="text-sm text-gray-600 dark:text-gray-400">Trusted by <strong className="text-gray-900 dark:text-white">10,000+</strong> learners</span>
             </div>
           </div>
 
           {/* Demo Card */}
-          <div className="bg-white dark:bg-[#131c2e] border border-gray-200 dark:border-gray-700/50 rounded-2xl p-6 shadow-xl dark:shadow-2xl dark:shadow-blue-900/10">
+          <div className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039]/50 rounded-2xl p-6 shadow-xl dark:shadow-2xl dark:shadow-[#3C83F6]/5">
             <div className="flex gap-2 mb-4">
               <div className="w-3 h-3 rounded-full bg-red-400"></div>
               <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
@@ -88,8 +89,8 @@ export default function HomePage() {
                   <span className="line-through text-red-400">She go</span> She <span className="text-green-400 font-semibold">goes</span> to the store.
                 </span>
               </div>
-              <div className="p-4 bg-blue-50 dark:bg-blue-900/15 border border-blue-200 dark:border-blue-800/40 rounded-lg">
-                <p className="text-xs text-blue-600 dark:text-blue-400 font-bold mb-1 tracking-wider">LOGIC RULE #42</p>
+              <div className="p-4 bg-[#3C83F6]/5 dark:bg-[#3C83F6]/10 border border-[#3C83F6]/20 dark:border-[#3C83F6]/20 rounded-lg">
+                <p className="text-xs text-[#3C83F6] dark:text-[#6BA3F7] font-bold mb-1 tracking-wider">LOGIC RULE #42</p>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
                   Third-person singular subjects require verbs ending in &quot;s&quot; in the present simple tense.
                 </p>
@@ -103,7 +104,7 @@ export default function HomePage() {
       <section id="method" className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14">
-            <p className="text-sm font-bold text-blue-500 mb-2 tracking-widest uppercase">The Methodology</p>
+            <p className="text-sm font-bold text-[#3C83F6] mb-2 tracking-widest uppercase">The Methodology</p>
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Why Rule-Based Learning Works</h2>
           </div>
 
@@ -116,8 +117,8 @@ export default function HomePage() {
               </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
-                    <span className="text-blue-500 text-sm">⚡</span>
+                  <div className="w-8 h-8 rounded-full bg-[#3C83F6]/10 dark:bg-[#3C83F6]/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-[#3C83F6] text-sm">⚡</span>
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-white">Instant Corrections</p>
@@ -125,8 +126,8 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center flex-shrink-0">
-                    <span className="text-pink-500 text-sm">🧠</span>
+                  <div className="w-8 h-8 rounded-full bg-[#D06A00]/10 dark:bg-[#D06A00]/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-[#D06A00] text-sm">🧠</span>
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-white">Deep Understanding</p>
@@ -134,30 +135,30 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-              <a href="#" className="inline-flex items-center gap-1 px-5 py-2 border border-blue-500 text-blue-500 rounded-full text-sm font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+              <a href="#" className="inline-flex items-center gap-1 px-5 py-2 border border-[#3C83F6] text-[#3C83F6] rounded-full text-sm font-medium hover:bg-[#3C83F6]/5 dark:hover:bg-[#3C83F6]/10 transition-colors">
                 Learn more about our method
               </a>
             </div>
 
             {/* Right Columns - Feature Cards */}
             <div className="md:col-span-2 grid sm:grid-cols-2 gap-4">
-              <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#131c2e] border border-gray-200 dark:border-gray-700/50">
-                <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-500 mb-4 text-lg">⚡</div>
+              <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039]/50">
+                <div className="w-10 h-10 rounded-xl bg-[#3C83F6]/10 dark:bg-[#3C83F6]/20 flex items-center justify-center text-[#3C83F6] mb-4 text-lg">⚡</div>
                 <h4 className="font-bold text-gray-900 dark:text-white mb-2">Real-time Analysis</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Instant feedback as you type complex sentences, powered by our custom syntax engine.</p>
               </div>
-              <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#131c2e] border border-gray-200 dark:border-gray-700/50">
-                <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-500 mb-4 text-lg">🌳</div>
+              <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039]/50">
+                <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/20 flex items-center justify-center text-green-500 mb-4 text-lg">🌳</div>
                 <h4 className="font-bold text-gray-900 dark:text-white mb-2">Grammar Logic Trees</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Visualize how sentence structures connect. See the skeleton of the language.</p>
               </div>
-              <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#131c2e] border border-gray-200 dark:border-gray-700/50">
-                <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-500 mb-4 text-lg">📈</div>
+              <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039]/50">
+                <div className="w-10 h-10 rounded-xl bg-[#D06A00]/10 dark:bg-[#D06A00]/20 flex items-center justify-center text-[#D06A00] mb-4 text-lg">📈</div>
                 <h4 className="font-bold text-gray-900 dark:text-white mb-2">Visual Progress</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Watch your mastery grow across 12 distinct grammar categories with clear charts.</p>
               </div>
-              <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#131c2e] border border-gray-200 dark:border-gray-700/50">
-                <div className="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-500 mb-4 text-lg">👥</div>
+              <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039]/50">
+                <div className="w-10 h-10 rounded-xl bg-[#6277A4]/10 dark:bg-[#6277A4]/20 flex items-center justify-center text-[#6277A4] mb-4 text-lg">👥</div>
                 <h4 className="font-bold text-gray-900 dark:text-white mb-2">Expert Curated</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Exercises designed by linguists to target common pain points for learners.</p>
               </div>
@@ -167,22 +168,22 @@ export default function HomePage() {
       </section>
 
       {/* 3-Step Process */}
-      <section className="py-20 px-6 bg-gray-50 dark:bg-[#0d1526]">
+      <section className="py-20 px-6 bg-gray-50 dark:bg-[#151720]">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-14">Simple 3-Step Process</h2>
           <div className="grid md:grid-cols-3 gap-10">
             <div className="flex flex-col items-center">
-              <div className="w-14 h-14 rounded-full border-2 border-blue-500 text-blue-500 flex items-center justify-center text-xl font-bold mb-4">1</div>
+              <div className="w-14 h-14 rounded-full border-2 border-[#3C83F6] text-[#3C83F6] flex items-center justify-center text-xl font-bold mb-4">1</div>
               <h3 className="font-bold text-gray-900 dark:text-white mb-2">Write</h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">Practice with daily prompts or free-write your own thoughts.</p>
             </div>
             <div className="flex flex-col items-center">
-              <div className="w-14 h-14 rounded-full border-2 border-blue-500 text-blue-500 flex items-center justify-center text-xl font-bold mb-4">2</div>
+              <div className="w-14 h-14 rounded-full border-2 border-[#3C83F6] text-[#3C83F6] flex items-center justify-center text-xl font-bold mb-4">2</div>
               <h3 className="font-bold text-gray-900 dark:text-white mb-2">Analyze</h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">Our engine breaks down your sentence structure instantly.</p>
             </div>
             <div className="flex flex-col items-center">
-              <div className="w-14 h-14 rounded-full border-2 border-blue-500 text-blue-500 flex items-center justify-center text-xl font-bold mb-4">3</div>
+              <div className="w-14 h-14 rounded-full border-2 border-[#3C83F6] text-[#3C83F6] flex items-center justify-center text-xl font-bold mb-4">3</div>
               <h3 className="font-bold text-gray-900 dark:text-white mb-2">Master</h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">Review the logic rules and track your improvement over time.</p>
             </div>
@@ -191,7 +192,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 bg-gradient-to-b from-blue-600 to-blue-800 dark:from-blue-700 dark:to-[#0b1120]">
+      <section className="py-20 px-6 bg-gradient-to-b from-[#3C83F6] to-[#2B6FE0] dark:from-[#3C83F6]/90 dark:to-[#111318]">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
             Ready to master English<br />grammar?
@@ -199,7 +200,7 @@ export default function HomePage() {
           <p className="text-blue-100 dark:text-blue-200 mb-8 leading-relaxed">
             Join thousands of learners using the logic-based approach today. No credit card required.
           </p>
-          <Link href="/signup" className="inline-flex px-8 py-3 bg-white text-blue-600 font-semibold rounded-full hover:bg-gray-100 transition-colors shadow-lg">
+          <Link href="/signup" className="inline-flex px-8 py-3 bg-white text-[#3C83F6] font-semibold rounded-full hover:bg-gray-100 transition-colors shadow-lg">
             Get Started for Free
           </Link>
           <p className="text-blue-200 dark:text-blue-300 text-sm mt-4">Free 14-day trial • Cancel anytime</p>
@@ -207,11 +208,11 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0b1120]">
+      <footer className="py-8 px-6 border-t border-[#D4D6DB] dark:border-[#2E3039] bg-white dark:bg-[#111318]">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-blue-500 rounded flex items-center justify-center">
-              <span className="text-white font-bold text-xs">L</span>
+            <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center">
+              <span className="text-white text-xs">💎</span>
             </div>
             <span className="font-semibold text-gray-900 dark:text-white">Lingua</span>
           </div>

@@ -130,7 +130,7 @@ export default function SmartReviewPage() {
                         ? "bg-red-500"
                         : severity === "medium"
                         ? "bg-yellow-500"
-                        : "bg-blue-500"
+                        : "bg-[#3C83F6]"
                     }`}
                   ></div>
 
@@ -146,7 +146,7 @@ export default function SmartReviewPage() {
                             ? "text-red-500"
                             : severity === "medium"
                             ? "text-yellow-600 dark:text-yellow-400"
-                            : "text-blue-500"
+                            : "text-[#3C83F6]"
                         }`}
                       >
                         {item.error_count} error{item.error_count > 1 ? "s" : ""}
