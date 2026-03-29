@@ -1,75 +1,39 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { fetchWordData, DictionaryEntry } from "@/lib/api/dictionary";
-import { Volume2, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { lookupWord, DictionaryEntry } from "@/lib/api/dictionary";
 
 interface VocabularyCardProps {
     word: string;
+    userLevel?: string;
 }
 
-export function VocabularyCard({ word }: VocabularyCardProps) {
+export function VocabularyCard({ word, userLevel = "A1" }: VocabularyCardProps) {
     const [entry, setEntry] = useState<DictionaryEntry | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
         setLoading(true);
         setError(null);
         setEntry(null);
 
-        fetchWordData(word).then((result) => {
+        lookupWord(word, userLevel).then((result) => {
             setEntry(result.data);
             setError(result.error);
             setLoading(false);
         });
-    }, [word]);
-
-    // Find the best audio URL from phonetics
-    function getAudioUrl(): string | null {
-        if (!entry) return null;
-        for (const phonetic of entry.phonetics) {
-            if (phonetic.audio) return phonetic.audio;
-        }
-        return null;
-    }
-
-    // Find the best phonetic text
-    function getPhoneticText(): string {
-        if (!entry) return "";
-        if (entry.phonetic) return entry.phonetic;
-        for (const phonetic of entry.phonetics) {
-            if (phonetic.text) return phonetic.text;
-        }
-        return "";
-    }
-
-    function playAudio() {
-        const url = getAudioUrl();
-        if (!url) return;
-
-        if (audioRef.current) {
-            audioRef.current.pause();
-        }
-
-        const audio = new Audio(url);
-        audioRef.current = audio;
-        setIsPlaying(true);
-
-        audio.play();
-        audio.onended = () => setIsPlaying(false);
-        audio.onerror = () => setIsPlaying(false);
-    }
+    }, [word, userLevel]);
 
     // Loading state
     if (loading) {
         return (
-            <div className="p-6 bg-card border border-border rounded-xl">
+            <div className="p-6 bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-2xl">
                 <div className="flex items-center gap-3">
-                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                    <span className="text-muted-foreground">Looking up &quot;{word}&quot;...</span>
+                    <div className="w-5 h-5 border-2 border-[#3C83F6] border-t-transparent rounded-full animate-spin" />
+                    <span className="text-[#75777F] text-sm">
+                        AI is looking up &quot;{word}&quot;...
+                    </span>
                 </div>
             </div>
         );
@@ -78,71 +42,78 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
     // Error state
     if (error || !entry) {
         return (
-            <div className="p-6 bg-card border border-border rounded-xl">
+            <div className="p-6 bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-2xl">
                 <div className="flex items-start gap-3">
                     <span className="text-2xl">📖</span>
                     <div>
-                        <h3 className="font-semibold text-foreground mb-1">{word}</h3>
-                        <p className="text-sm text-destructive">{error || "Word not found"}</p>
+                        <h3 className="font-semibold text-[#1A1C1E] dark:text-white mb-1">{word}</h3>
+                        <p className="text-sm text-red-500">{error || "Word not found"}</p>
                     </div>
                 </div>
             </div>
         );
     }
 
-    const phoneticText = getPhoneticText();
-    const audioUrl = getAudioUrl();
-    const firstMeaning = entry.meanings[0];
-
     return (
-        <div className="p-6 bg-card border border-border rounded-xl space-y-4">
-            {/* Word heading + phonetic + audio */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h3 className="text-xl font-bold text-foreground">{entry.word}</h3>
-                    {phoneticText && (
-                        <p className="text-sm text-primary mt-0.5">{phoneticText}</p>
+        <div className="p-6 bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-2xl space-y-4">
+            {/* Word + Phonetic + Part of Speech */}
+            <div>
+                <div className="flex items-center gap-3 mb-1">
+                    <h3 className="text-2xl font-bold text-[#1A1C1E] dark:text-white">{entry.word}</h3>
+                    {entry.phonetic && (
+                        <span className="text-sm text-[#3C83F6] font-mono">{entry.phonetic}</span>
                     )}
                 </div>
-                {audioUrl && (
-                    <button
-                        onClick={playAudio}
-                        disabled={isPlaying}
-                        className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 disabled:opacity-50 transition-colors"
-                    >
-                        <Volume2 className={`h-5 w-5 ${isPlaying ? "animate-pulse" : ""}`} />
-                        <span className="text-sm font-medium">
-                            {isPlaying ? "Playing..." : "Play Audio"}
-                        </span>
-                    </button>
+                {entry.partOfSpeech && (
+                    <span className="inline-block px-3 py-0.5 text-xs font-semibold bg-[#3C83F6]/10 text-[#3C83F6] rounded-full">
+                        {entry.partOfSpeech}
+                    </span>
                 )}
             </div>
 
-            {/* First meaning */}
-            {firstMeaning && (
-                <div>
-                    <span className="inline-block px-2 py-0.5 text-xs font-medium bg-secondary/10 text-secondary rounded mb-2">
-                        {firstMeaning.partOfSpeech}
-                    </span>
-                    {firstMeaning.definitions.slice(0, 2).map((def, i) => (
-                        <div key={i} className="mb-2">
-                            <p className="text-sm text-foreground">{def.definition}</p>
-                            {def.example && (
-                                <p className="text-xs text-muted-foreground mt-1 italic">
-                                    &quot;{def.example}&quot;
-                                </p>
-                            )}
-                        </div>
-                    ))}
+            {/* Definition (Vietnamese) */}
+            <div className="bg-[#F0F2F5] dark:bg-[#0B1525] border border-[#D4D6DB] dark:border-[#2E3039] rounded-xl p-4">
+                <p className="text-xs font-bold text-[#75777F] uppercase tracking-wider mb-2">Định nghĩa</p>
+                <p className="text-sm text-[#1A1C1E] dark:text-gray-200 leading-relaxed">{entry.definition}</p>
+            </div>
+
+            {/* Example + Translation */}
+            {entry.example && (
+                <div className="bg-[#F0F2F5] dark:bg-[#0B1525] border border-[#D4D6DB] dark:border-[#2E3039] rounded-xl p-4">
+                    <p className="text-xs font-bold text-[#75777F] uppercase tracking-wider mb-2">Ví dụ</p>
+                    <p className="text-sm text-[#1A1C1E] dark:text-gray-200 italic mb-2">
+                        &quot;{entry.example}&quot;
+                    </p>
+                    {entry.exampleTranslation && (
+                        <p className="text-xs text-[#75777F]">
+                            → {entry.exampleTranslation}
+                        </p>
+                    )}
                 </div>
             )}
 
-            {/* Additional meanings */}
-            {entry.meanings.length > 1 && (
-                <p className="text-xs text-muted-foreground">
-                    +{entry.meanings.length - 1} more meaning{entry.meanings.length > 2 ? "s" : ""}
-                </p>
+            {/* Synonyms */}
+            {entry.synonyms && entry.synonyms.length > 0 && (
+                <div>
+                    <p className="text-xs font-bold text-[#75777F] uppercase tracking-wider mb-2">Từ đồng nghĩa</p>
+                    <div className="flex flex-wrap gap-2">
+                        {entry.synonyms.map((syn, i) => (
+                            <span
+                                key={i}
+                                className="px-3 py-1 bg-[#3C83F6]/5 dark:bg-[#3C83F6]/10 text-[#3C83F6] text-sm font-medium rounded-full border border-[#3C83F6]/20"
+                            >
+                                {syn}
+                            </span>
+                        ))}
+                    </div>
+                </div>
             )}
+
+            {/* AI badge */}
+            <div className="flex items-center gap-1.5 pt-2 border-t border-[#D4D6DB]/50 dark:border-[#2E3039]/50">
+                <span className="text-xs">✨</span>
+                <span className="text-[10px] text-[#75777F]">Powered by Gemini AI · Level {userLevel}</span>
+            </div>
         </div>
     );
 }

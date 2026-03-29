@@ -1,26 +1,14 @@
-// Dictionary API utility
-// Fetches word data from Free Dictionary API
-
-interface Phonetic {
-    text?: string;
-    audio?: string;
-}
-
-interface Definition {
-    definition: string;
-    example?: string;
-}
-
-interface Meaning {
-    partOfSpeech: string;
-    definitions: Definition[];
-}
+// Smart Contextual AI Dictionary
+// Uses Gemini AI via /api/dictionary for level-tailored word lookups
 
 export interface DictionaryEntry {
     word: string;
-    phonetic?: string;
-    phonetics: Phonetic[];
-    meanings: Meaning[];
+    phonetic: string;
+    partOfSpeech: string;
+    definition: string;
+    example: string;
+    exampleTranslation: string;
+    synonyms: string[];
 }
 
 export interface DictionaryResult {
@@ -28,27 +16,28 @@ export interface DictionaryResult {
     error: string | null;
 }
 
-export async function fetchWordData(word: string): Promise<DictionaryResult> {
+export async function lookupWord(
+    word: string,
+    userLevel: string = "A1"
+): Promise<DictionaryResult> {
     try {
-        const response = await fetch(
-            `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`
-        );
+        const response = await fetch("/api/dictionary", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ word: word.trim(), userLevel }),
+        });
 
         if (!response.ok) {
-            if (response.status === 404) {
-                return { data: null, error: "Word not found in the dictionary." };
-            }
-            return { data: null, error: "Failed to fetch word data." };
+            const errorData = await response.json().catch(() => null);
+            return {
+                data: null,
+                error: errorData?.error || "Failed to look up word.",
+            };
         }
 
-        const entries: DictionaryEntry[] = await response.json();
-
-        if (entries.length === 0) {
-            return { data: null, error: "No data found for this word." };
-        }
-
-        return { data: entries[0], error: null };
-    } catch (err) {
+        const data: DictionaryEntry = await response.json();
+        return { data, error: null };
+    } catch {
         return { data: null, error: "Network error. Please try again." };
     }
 }

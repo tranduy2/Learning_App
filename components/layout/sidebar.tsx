@@ -8,6 +8,7 @@ import { createClient } from "@/lib/client";
 
 const navItems = [
     { href: "/learn", label: "Learn", icon: "📚" },
+    { href: "/dictionary", label: "Dictionary", icon: "📖" },
     { href: "/dashboard", label: "Dashboard", icon: "📊" },
     { href: "/statistics", label: "Statistics", icon: "📈" },
     { href: "/review", label: "Smart Review", icon: "🧠" },

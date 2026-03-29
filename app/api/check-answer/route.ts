@@ -20,7 +20,7 @@ Rules:
 - If a grammar rule explanation is provided, reference it in your feedback.
 - Provide feedback in Vietnamese (1-2 sentences). Be encouraging even when the answer is wrong.
 
-You MUST return a JSON object with this EXACT structure:
+You MUST return ONLY a valid JSON object (no markdown, no extra text) with this EXACT structure:
 {
   "isCorrect": boolean,
   "feedback": "string (Vietnamese, 1-2 sentences)",
@@ -98,10 +98,7 @@ export async function POST(request: Request) {
 
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash",
-            generationConfig: {
-                responseMimeType: "application/json",
-            },
+            model: "gemini-2.5-flash",
         });
 
         const prompt = `${SYSTEM_PROMPT}
@@ -111,12 +108,19 @@ User's Answer: "${userAnswer}"
 Correct Answer: "${correctAnswer}"
 ${grammarRuleExplanation ? `Grammar Rule: "${grammarRuleExplanation}"` : ""}
 
-Evaluate the user's answer and return the JSON response.`;
+Evaluate the user's answer. Return ONLY the JSON object, nothing else. No markdown code blocks, no extra text.`;
 
         const result = await model.generateContent(prompt);
         const text = result.response.text();
 
-        const parsed: GeminiResponse = JSON.parse(text);
+        // Extract JSON from response (may be wrapped in markdown code blocks)
+        let jsonText = text;
+        const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+        if (jsonMatch) {
+            jsonText = jsonMatch[1];
+        }
+
+        const parsed: GeminiResponse = JSON.parse(jsonText);
 
         // Validate structure
         if (
