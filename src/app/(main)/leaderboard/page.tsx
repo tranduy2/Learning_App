@@ -6,8 +6,11 @@ import { createClient } from "@/lib/client";
 interface LeaderboardUser {
     id: string;
     display_name: string;
+    name?: string;
     total_xp: number;
     current_level: string;
+    level?: string;
+    cefr_level?: string;
     current_streak: number;
 }
 
@@ -29,11 +32,24 @@ export default function LeaderboardPage() {
 
             const { data } = await supabase
                 .from("profiles")
-                .select("id, display_name, total_xp, current_level, current_streak")
+                .select("*")
                 .order("total_xp", { ascending: false })
                 .limit(20);
 
-            if (data) setUsers(data);
+            if (data) {
+                const mappedUsers: LeaderboardUser[] = (data as any[]).map((row: any) => ({
+                    id: row.id,
+                    display_name: row.display_name || row.name || "Anonymous",
+                    name: row.name,
+                    total_xp: row.total_xp || 0,
+                    current_level: row.current_level || row.level || row.cefr_level || "A1",
+                    level: row.level,
+                    cefr_level: row.cefr_level,
+                    current_streak: row.current_streak || 0,
+                }));
+
+                setUsers(mappedUsers);
+            }
             setLoading(false);
         }
 
