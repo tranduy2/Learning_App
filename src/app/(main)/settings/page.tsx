@@ -68,7 +68,7 @@ export default function SettingsPage() {
                                 <p className="font-semibold text-sm text-[#1A1C1E] dark:text-white">Sound Effects</p>
                                 <p className="text-xs text-[#75777F]">Auditory feedback for correct syntax logic</p>
                             </div>
-                            <Toggle value={soundEffects} onChange={setSoundEffects} />
+                            <Toggle label="Sound Effects" value={soundEffects} onChange={setSoundEffects} />
                         </div>
 
                         {/* Haptic Feedback */}
@@ -77,7 +77,7 @@ export default function SettingsPage() {
                                 <p className="font-semibold text-sm text-[#1A1C1E] dark:text-white">Haptic Feedback</p>
                                 <p className="text-xs text-[#75777F]">Tactile response on mobile interactions</p>
                             </div>
-                            <Toggle value={hapticFeedback} onChange={setHapticFeedback} />
+                            <Toggle label="Haptic Feedback" value={hapticFeedback} onChange={setHapticFeedback} />
                         </div>
                     </div>
 
@@ -105,7 +105,7 @@ export default function SettingsPage() {
                                 <p className="font-semibold text-sm text-[#1A1C1E] dark:text-white">Two-Factor Authentication</p>
                                 <p className="text-xs text-[#75777F]">Add an extra layer of logic security</p>
                             </div>
-                            <Toggle value={twoFactor} onChange={setTwoFactor} />
+                            <Toggle label="Two-Factor Authentication" value={twoFactor} onChange={setTwoFactor} />
                         </div>
                     </div>
                 </div>
@@ -121,11 +121,11 @@ export default function SettingsPage() {
 
                         <div className="flex items-center justify-between py-3">
                             <span className="text-sm font-medium text-[#1A1C1E] dark:text-white">Email Reminders</span>
-                            <Toggle value={emailReminders} onChange={setEmailReminders} />
+                            <Toggle label="Email Reminders" value={emailReminders} onChange={setEmailReminders} />
                         </div>
                         <div className="flex items-center justify-between py-3 border-t border-[#D4D6DB]/50 dark:border-[#2E3039]/50">
                             <span className="text-sm font-medium text-[#1A1C1E] dark:text-white">Push Notifications</span>
-                            <Toggle value={pushNotifications} onChange={setPushNotifications} />
+                            <Toggle label="Push Notifications" value={pushNotifications} onChange={setPushNotifications} />
                         </div>
                     </div>
 
@@ -168,10 +168,20 @@ export default function SettingsPage() {
 }
 
 /* Toggle Component */
-function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
+function Toggle({
+    label,
+    value,
+    onChange,
+}: {
+    label: string;
+    value: boolean;
+    onChange: (v: boolean) => void;
+}) {
     return (
         <button
             onClick={() => onChange(!value)}
+            title={`Toggle ${label}`}
+            aria-label={`Toggle ${label}`}
             className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${
                 value ? "bg-[#3C83F6]" : "bg-[#D4D6DB] dark:bg-[#2E3039]"
             }`}

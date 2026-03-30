@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/client";
 import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { AIExerciseGenerator } from "@/components/admin/ai-exercise-generator";
 
 interface Exercise {
     id: string;
@@ -122,13 +123,16 @@ export default function ExercisesPage() {
         <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold">Exercises</h1>
-                <button
-                    onClick={openCreateForm}
-                    className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-                >
-                    <Plus className="h-4 w-4" />
-                    Add Exercise
-                </button>
+                <div className="flex items-center gap-3">
+                    <AIExerciseGenerator onSaved={loadData} lessons={lessons} />
+                    <button
+                        onClick={openCreateForm}
+                        className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+                    >
+                        <Plus className="h-4 w-4" />
+                        Add Exercise
+                    </button>
+                </div>
             </div>
 
             {/* Form Modal */}
@@ -144,6 +148,7 @@ export default function ExercisesPage() {
                                 <select
                                     value={lessonId}
                                     onChange={(e) => setLessonId(e.target.value)}
+                                    title="Select a lesson for this exercise"
                                     className="w-full h-10 px-3 rounded-lg border border-input bg-background"
                                 >
                                     <option value="">Select lesson...</option>
@@ -161,6 +166,7 @@ export default function ExercisesPage() {
                                     <select
                                         value={type}
                                         onChange={(e) => setType(e.target.value)}
+                                        title="Select exercise type"
                                         className="w-full h-10 px-3 rounded-lg border border-input bg-background"
                                     >
                                         <option value="multiple_choice">Multiple Choice</option>
@@ -175,6 +181,7 @@ export default function ExercisesPage() {
                                     <select
                                         value={grammarRuleId}
                                         onChange={(e) => setGrammarRuleId(e.target.value)}
+                                        title="Select grammar rule or leave empty for none"
                                         className="w-full h-10 px-3 rounded-lg border border-input bg-background"
                                     >
                                         <option value="">None</option>
@@ -258,10 +265,10 @@ export default function ExercisesPage() {
                                     </p>
                                 </div>
                                 <div className="flex gap-1">
-                                    <button onClick={() => openEditForm(exercise)} className="p-2 rounded-lg hover:bg-muted">
+                                    <button onClick={() => openEditForm(exercise)} className="p-2 rounded-lg hover:bg-muted" title="Edit exercise">
                                         <Pencil className="h-4 w-4 text-muted-foreground" />
                                     </button>
-                                    <button onClick={() => handleDelete(exercise.id)} className="p-2 rounded-lg hover:bg-muted">
+                                    <button onClick={() => handleDelete(exercise.id)} className="p-2 rounded-lg hover:bg-muted" title="Delete exercise">
                                         <Trash2 className="h-4 w-4 text-destructive" />
                                     </button>
                                 </div>

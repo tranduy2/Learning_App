@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { AccessibilityProvider } from "@/components/providers/accessibility-provider";
-import "./globals.css";
+import "@/styles/globals.css";
 
 const lexend = Lexend({
   subsets: ["vietnamese"],

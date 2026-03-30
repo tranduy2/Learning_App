@@ -155,6 +155,7 @@ export default function CurriculumPage() {
                                 <select
                                     value={unitCefrLevel}
                                     onChange={(e) => setUnitCefrLevel(e.target.value)}
+                                    title="Select CEFR level for unit"
                                     className="w-full h-10 px-3 rounded-lg border border-input bg-background"
                                 >
                                     <option value="A1">A1</option>
@@ -218,10 +219,10 @@ export default function CurriculumPage() {
                                         </div>
                                     </button>
                                     <div className="flex gap-1">
-                                        <button onClick={() => openEditUnitForm(unit)} className="p-2 rounded-lg hover:bg-muted">
+                                        <button onClick={() => openEditUnitForm(unit)} className="p-2 rounded-lg hover:bg-muted" title="Edit unit">
                                             <Pencil className="h-4 w-4 text-muted-foreground" />
                                         </button>
-                                        <button onClick={() => handleDeleteUnit(unit.id)} className="p-2 rounded-lg hover:bg-muted">
+                                        <button onClick={() => handleDeleteUnit(unit.id)} className="p-2 rounded-lg hover:bg-muted" title="Delete unit">
                                             <Trash2 className="h-4 w-4 text-destructive" />
                                         </button>
                                     </div>

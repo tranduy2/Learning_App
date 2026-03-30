@@ -152,6 +152,7 @@ export default function GrammarRulesPage() {
                                     <select
                                         value={cefrLevel}
                                         onChange={(e) => setCefrLevel(e.target.value)}
+                                        title="Select CEFR level for grammar rule"
                                         className="w-full h-10 px-3 rounded-lg border border-input bg-background"
                                     >
                                         <option value="A1">A1</option>
@@ -247,12 +248,14 @@ export default function GrammarRulesPage() {
                                 <div className="flex gap-1">
                                     <button
                                         onClick={() => openEditForm(rule)}
+                                        title="Edit grammar rule"
                                         className="p-2 rounded-lg hover:bg-muted"
                                     >
                                         <Pencil className="h-4 w-4 text-muted-foreground" />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(rule.id)}
+                                        title="Delete grammar rule"
                                         className="p-2 rounded-lg hover:bg-muted"
                                     >
                                         <Trash2 className="h-4 w-4 text-destructive" />
