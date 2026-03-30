@@ -1,9 +1,5 @@
 import { createClient } from "@/lib/client";
 
-/**
- * Logs a user's error to the user_weaknesses table in Supabase.
- * If the weakness already exists, increments error_count.
- */
 export async function logUserWeakness(
   userId: string,
   grammarRuleId: string,

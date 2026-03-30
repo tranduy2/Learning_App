@@ -7,13 +7,25 @@ import { getLevelInfo } from "@/lib/api/gamification";
 
 interface Profile {
     display_name: string;
+    avatar_url?: string;
     total_xp: number;
     current_streak: number;
     current_level: string;
     created_at: string;
 }
 
+interface ProfileRow {
+    display_name?: string;
+    name?: string;
+    avatar_url?: string;
+    total_xp?: number;
+    current_streak?: number;
+    current_level?: string;
+    created_at?: string;
+}
+
 interface Weakness {
+    grammar_rule_id: string;
     error_count: number;
     grammar_rules: {
         title: string;
@@ -34,18 +46,59 @@ export default function ProfilePage() {
 
             const { data: profileData } = await supabase
                 .from("profiles")
-                .select("display_name, total_xp, current_streak, current_level, created_at")
+                .select("*")
                 .eq("id", user.id)
                 .single();
-            if (profileData) setProfile(profileData);
+            if (profileData) {
+                const row = profileData as ProfileRow;
+                setProfile({
+                    display_name: row.display_name || row.name || "Student",
+                    avatar_url: row.avatar_url || "",
+                    total_xp: row.total_xp || 0,
+                    current_streak: row.current_streak || 0,
+                    current_level: row.current_level || "A1",
+                    created_at: row.created_at || "",
+                });
+            }
 
             const { data: weakData } = await supabase
                 .from("user_weaknesses")
-                .select("error_count, grammar_rules(title, category)")
+                .select("grammar_rule_id, error_count")
                 .eq("user_id", user.id)
                 .order("error_count", { ascending: false })
                 .limit(10);
-            if (weakData) setWeaknesses(weakData as unknown as Weakness[]);
+
+            if (weakData && weakData.length > 0) {
+                const grammarRuleIds = weakData
+                    .map((w: any) => w.grammar_rule_id)
+                    .filter(Boolean);
+
+                const { data: grammarRulesData } = await supabase
+                    .from("grammar_rules")
+                    .select("id, title, category")
+                    .in("id", grammarRuleIds);
+
+                const grammarRuleMap = new Map(
+                    (grammarRulesData || []).map((rule: any) => [rule.id, rule])
+                );
+
+                const mappedWeaknesses: Weakness[] = weakData.map((item: any) => {
+                    const rule = grammarRuleMap.get(item.grammar_rule_id);
+
+                    return {
+                        grammar_rule_id: item.grammar_rule_id,
+                        error_count: item.error_count,
+                        grammar_rules: {
+                            title: rule?.title || "Unknown Rule",
+                            category: rule?.category || "General",
+                        },
+                    };
+                });
+
+                setWeaknesses(mappedWeaknesses);
+            } else {
+                setWeaknesses([]);
+            }
 
             setLoading(false);
         }
@@ -100,8 +153,12 @@ export default function ProfilePage() {
                     {/* Profile Card */}
                     <div className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-2xl p-6 text-center">
                         <div className="relative w-24 h-24 mx-auto mb-4">
-                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#3C83F6] to-[#6277A4] flex items-center justify-center text-3xl text-white font-bold">
-                                {displayName.charAt(0).toUpperCase()}
+                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#3C83F6] to-[#6277A4] flex items-center justify-center text-3xl text-white font-bold overflow-hidden">
+                                {profile?.avatar_url ? (
+                                    <img src={profile.avatar_url} alt="Profile avatar" className="w-full h-full object-cover" />
+                                ) : (
+                                    displayName.charAt(0).toUpperCase()
+                                )}
                             </div>
                             <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-[#1B1D24]" />
                         </div>

@@ -1,9 +1,5 @@
 import { createClient } from "@/lib/client";
 
-/**
- * Saves XP to the user's profile after completing a lesson.
- * Also updates the daily streak.
- */
 export async function saveXpToProfile(userId: string, xpEarned: number) {
     const supabase = createClient();
 

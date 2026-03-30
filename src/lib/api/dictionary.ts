@@ -1,6 +1,3 @@
-// Smart Contextual AI Dictionary
-// Uses Gemini AI via /api/dictionary for level-tailored word lookups
-
 export interface DictionaryEntry {
     word: string;
     phonetic: string;

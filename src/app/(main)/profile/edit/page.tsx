@@ -1,17 +1,37 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/client";
 import { getLevelInfo } from "@/lib/api/gamification";
 
+interface UserRow {
+    display_name?: string;
+    name?: string;
+    email?: string;
+    avatar_url?: string;
+    level?: string;
+    cefr_level?: string;
+}
+
+interface ProfileRow {
+    total_xp?: number;
+    current_level?: string;
+    created_at?: string;
+}
+
 export default function EditProfilePage() {
     const router = useRouter();
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [profileNameColumn, setProfileNameColumn] = useState<"name" | "display_name" | null>(null);
+    const [canUpdateAvatar, setCanUpdateAvatar] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    const [displayName, setDisplayName] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
+    const [avatarPreviewUrl, setAvatarPreviewUrl] = useState("");
     const [bio, setBio] = useState("");
     const [totalXp, setTotalXp] = useState(0);
     const [currentLevel, setCurrentLevel] = useState("");
@@ -23,20 +43,39 @@ export default function EditProfilePage() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
 
-            setEmail(user.email || "");
+            const { data: userData } = await supabase
+                .from("profiles")
+                .select("*")
+                .eq("id", user.id)
+                .single();
+
+            if (userData) {
+                const row = userData as UserRow;
+                const hasDisplayName = Object.prototype.hasOwnProperty.call(row, "display_name");
+                const hasName = Object.prototype.hasOwnProperty.call(row, "name");
+                const nameColumn = hasDisplayName ? "display_name" : hasName ? "name" : null;
+                setProfileNameColumn(nameColumn);
+                setCanUpdateAvatar(Object.prototype.hasOwnProperty.call(row, "avatar_url"));
+
+                setName((nameColumn === "display_name" ? row.display_name : nameColumn === "name" ? row.name : "") || "");
+                setEmail(row.email || user.email || "");
+                setAvatarPreviewUrl(row.avatar_url || "");
+            } else {
+                setEmail(user.email || "");
+            }
 
             const { data: profile } = await supabase
                 .from("profiles")
-                .select("display_name, total_xp, current_level, created_at")
+                .select("*")
                 .eq("id", user.id)
                 .single();
 
             if (profile) {
-                setDisplayName(profile.display_name || "");
-                setTotalXp(profile.total_xp || 0);
-                setCurrentLevel(profile.current_level || "A1");
+                const row = profile as ProfileRow & UserRow;
+                setTotalXp(row.total_xp || 0);
+                setCurrentLevel(row.current_level || row.level || row.cefr_level || "A1");
                 setMemberSince(
-                    new Date(profile.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })
+                    new Date(row.created_at || new Date().toISOString()).toLocaleDateString("en-US", { month: "long", year: "numeric" })
                 );
             }
             setLoading(false);
@@ -44,18 +83,98 @@ export default function EditProfilePage() {
         fetchProfile();
     }, []);
 
-    async function handleSave() {
-        setSaving(true);
+    useEffect(() => {
+        return () => {
+            if (avatarPreviewUrl.startsWith("blob:")) {
+                URL.revokeObjectURL(avatarPreviewUrl);
+            }
+        };
+    }, [avatarPreviewUrl]);
+
+    function handleAvatarPick() {
+        fileInputRef.current?.click();
+    }
+
+    function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0] || null;
+        setAvatarFile(file);
+
+        if (file) {
+            if (avatarPreviewUrl.startsWith("blob:")) {
+                URL.revokeObjectURL(avatarPreviewUrl);
+            }
+            setAvatarPreviewUrl(URL.createObjectURL(file));
+        }
+    }
+
+    async function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        setIsLoading(true);
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user) {
+            setIsLoading(false);
+            return;
+        }
 
-        await supabase
+        let nextAvatarUrl = avatarPreviewUrl;
+
+        if (avatarFile && !canUpdateAvatar) {
+            alert("Schema profiles hien tai khong co cot avatar_url nen khong the luu anh dai dien.");
+            setIsLoading(false);
+            return;
+        }
+
+        if (avatarFile) {
+            const fileExt = avatarFile.name.split(".").pop() || "jpg";
+            const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from("avatars")
+                .upload(fileName, avatarFile, { upsert: false });
+
+            if (uploadError) {
+                alert(uploadError.message || "Failed to upload avatar");
+                setIsLoading(false);
+                return;
+            }
+
+            const { data: publicUrlData } = supabase.storage
+                .from("avatars")
+                .getPublicUrl(fileName);
+
+            nextAvatarUrl = publicUrlData.publicUrl;
+        }
+
+        const updatePayload: Record<string, string | null> = {};
+
+        if (profileNameColumn) {
+            updatePayload[profileNameColumn] = name;
+        }
+
+        if (canUpdateAvatar) {
+            updatePayload.avatar_url = nextAvatarUrl || null;
+        }
+
+        if (Object.keys(updatePayload).length === 0) {
+            alert("No editable profile columns found in current schema.");
+            setIsLoading(false);
+            return;
+        }
+
+        const { error: updateError } = await supabase
             .from("profiles")
-            .update({ display_name: displayName })
+            .update(updatePayload)
             .eq("id", user.id);
 
-        setSaving(false);
+        if (updateError) {
+            alert(updateError.message || "Failed to update profile");
+            setIsLoading(false);
+            return;
+        }
+
+        alert("Profile updated successfully!");
+        setIsLoading(false);
         router.push("/profile");
     }
 
@@ -85,14 +204,31 @@ export default function EditProfilePage() {
                 {/* Left: Avatar Card */}
                 <div className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-2xl p-6 text-center h-fit">
                     <div className="relative w-32 h-32 mx-auto mb-4">
-                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#3C83F6] to-[#6277A4] flex items-center justify-center text-4xl text-white font-bold border-4 border-[#3C83F6]/30">
-                            {displayName ? displayName.charAt(0).toUpperCase() : "?"}
+                        <div
+                            onClick={handleAvatarPick}
+                            className="w-32 h-32 rounded-full bg-gradient-to-br from-[#3C83F6] to-[#6277A4] flex items-center justify-center text-4xl text-white font-bold border-4 border-[#3C83F6]/30 overflow-hidden cursor-pointer"
+                        >
+                            {avatarPreviewUrl ? (
+                                <img src={avatarPreviewUrl} alt="Avatar preview" className="w-full h-full object-cover" />
+                            ) : (
+                                name ? name.charAt(0).toUpperCase() : "?"
+                            )}
                         </div>
-                        <div className="absolute bottom-1 right-1 w-9 h-9 bg-[#3C83F6] rounded-full flex items-center justify-center border-3 border-white dark:border-[#1B1D24] cursor-pointer hover:bg-[#2B6FE0] transition-colors">
+                        <div
+                            onClick={handleAvatarPick}
+                            className="absolute bottom-1 right-1 w-9 h-9 bg-[#3C83F6] rounded-full flex items-center justify-center border-3 border-white dark:border-[#1B1D24] cursor-pointer hover:bg-[#2B6FE0] transition-colors"
+                        >
                             <span className="text-white text-sm">📷</span>
                         </div>
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleAvatarChange}
+                            className="hidden"
+                        />
                     </div>
-                    <h2 className="text-lg font-bold text-[#1A1C1E] dark:text-white">{displayName || "Student"}</h2>
+                    <h2 className="text-lg font-bold text-[#1A1C1E] dark:text-white">{name || "Student"}</h2>
                     <p className="text-xs text-[#75777F] mt-1">Joined {memberSince}</p>
 
                     <div className="mt-5">
@@ -112,7 +248,7 @@ export default function EditProfilePage() {
 
                 {/* Right: Form */}
                 <div className="space-y-6">
-                    <div className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-2xl p-6 space-y-5">
+                    <form onSubmit={handleSubmit} className="bg-white dark:bg-[#1B1D24] border border-[#D4D6DB] dark:border-[#2E3039] rounded-2xl p-6 space-y-5">
                         {/* Username */}
                         <div>
                             <label className="text-xs font-bold text-[#75777F] uppercase tracking-wider mb-2 block">Username</label>
@@ -120,8 +256,8 @@ export default function EditProfilePage() {
                                 <span className="text-[#75777F]">@</span>
                                 <input
                                     type="text"
-                                    value={displayName}
-                                    onChange={(e) => setDisplayName(e.target.value)}
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
                                     className="flex-1 bg-transparent text-[#1A1C1E] dark:text-white outline-none text-sm"
                                     placeholder="Your display name"
                                 />
@@ -177,11 +313,11 @@ export default function EditProfilePage() {
                         {/* Save / Cancel */}
                         <div className="flex gap-4 pt-2">
                             <button
-                                onClick={handleSave}
-                                disabled={saving}
+                                type="submit"
+                                disabled={isLoading}
                                 className="px-8 py-3 bg-[#3C83F6] text-white rounded-xl font-semibold hover:bg-[#2B6FE0] transition-colors disabled:opacity-50 shadow-lg shadow-[#3C83F6]/20"
                             >
-                                {saving ? "Saving..." : "Save Changes"}
+                                {isLoading ? "Saving..." : "Save Changes"}
                             </button>
                             <Link
                                 href="/profile"
@@ -190,7 +326,7 @@ export default function EditProfilePage() {
                                 Cancel
                             </Link>
                         </div>
-                    </div>
+                    </form>
 
                     {/* Bottom cards: Security + Notifications */}
                     <div className="grid sm:grid-cols-2 gap-4">
